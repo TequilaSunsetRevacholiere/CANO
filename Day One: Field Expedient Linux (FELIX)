@@ -272,10 +272,26 @@ grep -ir "pooki_t" ./[filename] | tee pookit.txt pookit.txt.bak
   ls -a
   cat ...Hiding From You 2WmrDFRmJIq3IPxneAaMGhap0pFhF3NJ
 #OverTheWire 4
-cat ./-File_007 4oQYVPkxZOOEOO5pTW81FB8j8lxXGUQw
+  cat ./-File_007 4oQYVPkxZOOEOO5pTW81FB8j8lxXGUQw
 #OverTheWire 5
-find ~/inhere/ -type f -size 1033c HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
+  find ~/inhere/ -type f -size 1033c HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
 #OverTheWire 6
   find / -user bandit7
-  /etc/bandit_pass/bandit7
-
+  /etc/bandit_pass/bandit7 --> Didn't work
+  /var/lib/dpkg/info/bandit7.password
+  cat bandit7.password morbNTDkSW6jIlUc0ymOdMaLnOlFVAaj
+#OverTheWire 7
+  grep -irw "millionth" ~/data.txt dfwvzFQi4mU0wfNbFOe9RoWskMLg7eEc
+    #-w tells grep to show the whole line
+#OverTheWire 8
+  sort data.txt | uniq -u 4CKMh1JI91bUIZZPXDqGanal4xvAg0JM
+    #-u tells uniq to only display unique lines in a text file
+#OverTheWire 9
+  grep -ira "===" data.txt FGUW5ilLVJrxX9kMYMmlN4MgbpfMiqey
+    #-a forces grep to parse binary data
+#OverTheWire10
+  base64 -d data.txt dtR173fZKb0RRsDFSGsg2RWnpNVj3qRr
+    #-d is the basic operator for decode
+#OverTheWire11
+  cat Data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
+  

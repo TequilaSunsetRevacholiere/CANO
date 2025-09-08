@@ -170,4 +170,112 @@ rm -rf /home/sherrif/therapy /*
   hostname = displays your hostname
 
 #Searching
-  
+  find = locates files based on user-defined criteria
+    find /etc --type f --name "*.conf"
+      #type f means file, while d would mean directory
+    find / -iname linux.odt
+      #having just the "/" will search through the entire system
+    find / -size +100M
+    find /opt /usr /var -name foo2oak.1.g -type f
+    find . -type d
+    find / -mtime 50
+    find / -cmin -60
+    find / -amin -60
+    find / -type f -name "*.mp3"
+  grep = used to locate plain-text data sets
+    grep root /etc/passwd
+    grep hello /usr/share/dict/american-english
+    grep -w -c hello /usr/share/dict/american-english
+      -w = Select only those  lines  containing  matches  that  form  whole words
+      -c = Suppress normal output; instead print a count of matching  lines for  each  input  file
+    grep "^cat" /usr/share/dict/american-english
+    grep -x "c.t" /usr/share/dict/american-english
+  #find searches for file names/directories whereas grep searches inside of files
+
+#use grep to find a file containing the phrase "buy a case"
+  grep -ir "Buy a case" .
+    -ir = ignore case-sensitivity and return the recursive result
+#use find to identify a file named "War-and-Peace"
+  find . -type f -name "*War-and-Peace*"
+#use grep to search for "Shakespeare in the book "Moby Dick"
+  ls -R
+  grep "Shakespeare" ./More-Files/Moby-Dick.txt
+
+#Processing Text
+  cut = slices out fields from each line of text
+    -f = fields 
+    -c = characters (i.e., -c1-9)
+    -d = delimiter (i.e., a comma ",")
+  sort = sorts the contents of a file
+    -r = reverses the sorting order
+  uniq = eliminates duplicate lines
+  diff = compares two files and displays the differences between them
+
+#Compressing and Archiving
+  gzip/gunzip
+  zgrep = searches within a compressed file
+  bzip2/bunzip2 
+  tar = compression for both utilities and directories
+
+#use the tar command to create a gzipped tarball of the more files directory named Reading.tar.gz
+  tar -zcf Reading.tar.gz ./More-Files/
+    -z = gzip
+    -c = create  a new archive
+    -f = file [new file name]
+
+#compress all of the txt files in the directory with one command
+  tar -zcf [new file name] *.txt
+
+#system information
+  id = shows current username/groups
+  uname = display info about linux system
+  df = shows disk space usage
+  ps = what processes are running on the system
+  -e = select all processes
+  -f = full-format listing
+  kill [process] = kill specified processes
+    -9 = kill with extreme prejudice
+
+ps -ef | grep wpa_supplicant 
+  kill 996 && kill 99633
+
+#Networking
+  ifconfig = configures a network interface
+  iwconfig (iw) = configures a wireless interface
+  ip = configures a network interface
+    sudo ifconfig wlan1 down
+    ip address show
+    ip link show
+    iw dev
+
+#Bash Scripting
+  #A shell scipt can automate the process for you for things that you routinely do.
+    cd Desktop/
+    touch scripts
+    nano Update_Scripts
+      #!/bin/bash = this is the statement that the scripting begins with
+  env = displays the user's environment
+  PATH = displays directories that holds commands. If the command is not in one of these directories, the OS does not know what you are asking of it.
+    echo $PATH
+  which [command] = will display where a specified command is located
+
+grep -ir "pooki_t" ./[filename] | tee pookit.txt pookit.txt.bak 
+
+#OverTheWire 0
+  ssh bandit0@bandit.labs.overthewire.org -p 2220 ZjLjTmM6FvvyRnrb2rfNWOZOTa6ip5If
+#OverTheWire 1
+  cat ./- 263JGJPfgU6LtdEvgfWU1XP5yac29mFx
+#OverTheWire 2
+  cat ./--spaces\ in\ this\ filename-- MNk8KNH3Usiio41PRUEoDFPqfxLPlSmx
+#OverTheWire 3
+  cd Inhere
+  ls -a
+  cat ...Hiding From You 2WmrDFRmJIq3IPxneAaMGhap0pFhF3NJ
+#OverTheWire 4
+cat ./-File_007 4oQYVPkxZOOEOO5pTW81FB8j8lxXGUQw
+#OverTheWire 5
+find ~/inhere/ -type f -size 1033c HWasnPhtq9AVKe0dmk45nxy20cvUa6EG
+#OverTheWire 6
+  find / -user bandit7
+  /etc/bandit_pass/bandit7
+

@@ -1,0 +1,173 @@
+#Linux Fundamentals 
+  #UNIX philosophy is to write programs that do one things and do it well
+  #The Terminal allows access to the "Shell". The "Shell" talks to the Kernel
+
+#Field Expedient LINUX
+  ls 
+    . = current dir
+    .. = parent dir
+    ~ = Home dir
+    / = Root dir
+  cd 
+  pwd = return/print working directory
+  mkdir rmdir = make directory / remove directory
+  cp/mv = copy file / move file, rename
+    cp [document absolute file path] [absolute destination file path]
+    #you can simply rename a file by using mv, the original file, and the new file name
+  rm = deletes a file/directory
+    rm -rf = remove recursively and forcefully
+    #you can use wildcards to delete things, i.e., rm doc*, will delete everything that has doc in it
+  touch = creates file based on your specified file type 
+    > = inputs contents to a new file / overwrites / creates a new file
+    >> = appends something to the bottom of an existing file
+  nano = command-line text editor
+    nano [absolute file path]
+  #Most Linux commands should have a Manual Page to describe everything that can be done with it
+    man = lists the Manual Page for a linux command
+      / = allows you to 
+  | = PIPE commands together
+    #Run this command, take the restults AND THEN | run the next command
+  history = lists previous commands
+  whoami =  Print  the  user  name  associated  with the current effective user ID.
+  echo = displays a line of text
+    echo testtest > test.txt 
+      #this will overwrite whatever was on test.txt with "testtest"
+  
+
+#Remote Connection
+  ping = network command to test responsiveness of a host
+  ssh = Secure Shell (remote connections)
+  scp = secure copy
+    #SCP utilizes the same safety structure as SSH
+    scp <options> [source destination]
+  rsync = file transfer
+
+#Field Expedient Linux Prac App
+  #moving the tar file into the Desktop
+    cd /
+    cd media/a28/Da Big One/1. Learnin'/5. Close Access Network Operations/[the file]
+    cp/mv media/a28/Da Big One/1. Learnin'/5. Close Access Network Operations/[the file] ~/Desktop/
+    tar -xvzf [the file]
+
+  #There are 4 files in the Snickerdoodles directory. Find it.
+    ls hansel/gingerbread-house/oven/snickerdoodles/ -latr
+
+  #Make and remove a directory in the Gretel directory
+    mkdir gretel/breadcrumb-trail
+    rmdir gretel/breadcrumb-trail
+
+  #there is a hidden file in chap-5 dir
+    ls hansel/ -R
+    #cp -a archives your file
+
+  #find dorothy and make a backup
+    find dorothy | cp dorothy dorothy.bak
+  #copy goldfish to overwrite dorothy
+    cp goldfish dorothy
+  #delete dorothy, then rename the backup of dorothy to dorothy2
+    rm dorothy | mv dorothy.bak dorothy2
+  #move to hansel, then use dot notation to copy the file foo2 in Gretel to hansel
+    cd hansel | cp ../gretel/foo2 .
+
+#Reading Files
+  cat/tac = concatenate files or characters
+  head/tail = display first or last few lines
+  wc = word count
+  #use the \ to escape out of any really long directories
+
+#Linux Wildcards
+  * = represents any sequence of zero or more characters
+  ? = represents any single character
+    #ls song?.mp3
+  [] = represents any reange of characters
+    # [abcde] / [a-e] 
+    #ls song[0-9][0-9].mp3
+  {} = provides options 
+    #ls {un,ack} lists files with names starting with "un" or "ack"
+
+rm -rf /home/sherrif/therapy /*
+  #this will delete the "therapy" directory and the entire Root directory
+
+  #list files with file"
+    ls *file*
+  #list files from song0 to song9.mp3
+    ls song?.mp3
+  #list files song14 to song 17.mp3
+    ls song[1][4-7].mp3
+  #list prefilev to x
+    ls prefile[v-x].txt
+  #list all files that do NOT begin with the letter "p"
+    ls [!p]*
+  #list only files that begin with pre or post
+    ls {pre,post}*
+  #list files with numbers in the name
+    ls *[0-9]*
+
+#Absolute vs. Relative
+  #Absolute starts from the highest directory to the destination
+    pwd
+  #Relative is the current dir you are working inside of
+
+#File Redirection I/O
+  stdin = standard input (keyboard)
+  stdout = standard output
+  >> = append
+  < = take input from a file vs keyboard
+    wc < foofile.txt
+  ; = string multiple commands together
+    #do this no matter what, will not care about the first command's results
+  tee = splits data output into different locations
+    ls | tee foo
+      #will show the list in the terminal and then PIPE that data into the foo text file
+  && = run multiple commands together
+    #will run multiple commands, but it cares about the success of the first commands
+
+  #combine two text files into a new file
+    cat first.text spam.txt > classic 
+  #use >> and spam to to create a file with spam on three different lines
+    cat spam > spam 3 ; cat spam >> spam 3 ; cat spam >> spam 3
+    echo -e "spam\nspam\nspam" > spam.txt
+  #use a pipe to count the number of lines from the ls command and save the ouptut to a file named "new.txt"
+    ls | wc -l > new.txt
+
+#Text Editors
+  vi = preinstalled, old school
+  vim = vi improved, syntax highlighting
+    vimgenius.com (Vim Genius Online Trainer)
+    vim.rtorr.com (Vim Cheatsheet)
+  nano = like wordpad, easy to use
+  gedit = like notepad, gui-based
+
+#File Permsissions
+  chown = changes ownership of a file
+    sudo chown [user:group] [file]
+  chmod = changes the permissions of a file
+    sudo chmod [operator] [file]
+      sudo chmod ugo+x = adding readable and executable permissions for user, group, and others
+      sudo chmod ugo-xr = removing readable and executable permissions for user, group, and others
+      sudo chmod u=rwx = giving the user read,write,execute permissions for a specific file
+      sudo chmod 741 = user has rwx, group has write, others have execute
+      -r = readable (4)
+      -w = writeable (2)
+      -e = executable (1)
+      - = denied 
+    Owner (u) = rw-
+    Group (g) = r--
+    Other (o) = r--
+
+#Users and Super Users
+  useradd = add user
+  adduser = add user
+  usermod = modify user account
+  groups user = shows which groups "user" is a part of
+  deluser = deletes or modifies a user account
+
+#User Commands
+  su = changes from user to super user
+  sudo = utilizes superuser permissions for the specific command
+    sudo !! = will run the last command entered as a super user
+  passwd user = change user password
+  hostname = displays your hostname
+
+#Searching
+  

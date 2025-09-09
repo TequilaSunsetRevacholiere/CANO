@@ -18,7 +18,7 @@ sudo update-grub
 sudo update-initramfs -u 
 reboot 
 
-  #Changing the hostname of your workstation or Pi
+  #Changing the hostname of your workstation or Pi.
 
 sudo hostnamectl hostname [name]
           or

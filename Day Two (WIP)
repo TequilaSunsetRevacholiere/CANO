@@ -35,12 +35,13 @@ lsusb
 sudo ethtool -i [interface]
 
 #this command allows you to see the real-time ip connections in your computer.
+
 watch ip link
 
 #Aircrack-ng Suite. This is is a suite of tools used for auditing wireless networks. It can monitor, attack, test, and crack.
   #Installation and Config
 
-#You are going to have to download a ton of dependencies based off of your OS. I did this off on Debian/Ubuntu so that's what I have there. These dependencies can be found within the "INSTALLING" file on the github or in the aircracked-ng file when you install it.
+#You are going to have to download a ton of dependencies based off your OS. I did this off on Debian/Ubuntu so that's what I have there. These dependencies can be found within the "INSTALLING" file on the github or in the aircracked-ng file when you install it.
 sudo apt-get update
 sudo apt-get install libtool m4 automake pkg-config
 git clone https://github.com/theweefies/aircracked-ng

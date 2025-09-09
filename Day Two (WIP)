@@ -1,113 +1,90 @@
-man ethtool
-  559  lsusb
-  560  iwconfig
-  561  sudo ethtool -i wlp0s20fu2
-  562  sudo ethtool -i wlp0s20f0u2
-  563  clear
-  564  man aircrack-ng
-  565  sudo apt install gpsd gpsd-clients
-  566  man ethtools
-  567  lsusb
-  568  xgps
-  569  cgps
-  570  gpsmon
-  571  clear
-  572  sudo nano /etc/default/gpsd 
-  573  sudo systemctl restart gpsd
-  574  sudo nano /etc/default/gpsd 
-  575  sudo systemctl restart gpsd
-  576  gpsmon
-  577  man gpsmon
-  578  gpsmon //dev/ttyUSB0
-  579  sudo dmesg | grep /dev/ttyUSB0
-  580  gpsmon //dev/ttyUSB0
-  581  clear
-  582  xgps
-  583  cgps
-  584  sudo dmesg | grep /dev/ttyUSB0 | tee 
-  585  clear
-  586  history
-  587  sudo dmesg | grep /dev/ttyUSB0 | tee test
-  588  ls
-  589  cat test
-  590  rm test
-  591  rm pooki.txt pooki.txt.bak sand123.txt
-  592  ls
-  593  rm pookie.txt.bak 
-  594  rm sorted.txt 
-  595  rm techmint.txt 
-  596  ls
-  597  clear
-  598  sudo apt-get update
-  599  sudo apt-get install libtool m4 automake pkg-config
-  600  sudo apt-get install libtool m4 automake pkg-config
-  601  git clone https://github.com/theweefies/aircracked-ng
-  602  ls
-  603  cd aircracked-ng/
-  604  autoreconf -i
-  605  ./configure
-  606  sudo make
-  607  apt install g++
-  608  sudo apt install g++
-  609  sudo make
-  610  man make
-  611  ls
-  612  ./configure
-  613  ls
-  614  cd scripts
-  615  ls
-  616  cd ..
-  617  ls
-  618  cat INSTALLING 
-  619  sudo apt-get install build-essential autoconf automake libtool pkg-config libnl-3-dev libnl-genl-3-dev libssl-dev ethtool shtool rfkill zlib1g-dev libpcap-dev libsqlite3-dev libpcre3-dev libhwloc-dev libcmocka-dev hostapd wpasupplicant tcpdump screen iw usbutils
-  620  make
-  621  ./configure
-  622  make
-  623  make install
-  624  sudo make install
-  625  sudo nano/etc/profile
-  626  sudo nano /etc/profile
-  627  reboot
-  628  sudo nano /etc/profile
-  629  sudo ldconfig
+#Wireless NIC Preparation
+  #Changing Interface names on your laptop
 
+  #this file and parameters are used to set custom udev rules for persistent network interface naming.
+    #Don't do this if you have Sceptre installed on your laptop, because Sceptre fucks all of this up.
 
+sudo nano /etc/udev/rules.d/70-persistent-net.rules
+  SUBSYSTEM==”net”, ACTION==”add”, DRIVERS==”?*”, ATTR{address}==”xx:yy:xx:yy:xx:yy”, NAME=”wlan1”
 
+  #this is a udev rule that tells the system how to name a specific network interface based on its MAC address.
 
+sudo nano /etc/default/grub
+  GRUB_CMDLINE_LINUX=”net.ifnames=0 biosdevname=0”
 
+ #This is used to update the grub bootloader and the initial RAM filesystem after editing the udev rules.
 
+sudo update-grub
+sudo update-initramfs -u 
+reboot 
 
+  #Changing the hostname of your workstation or Pi
 
+sudo hostnamectl hostname [name]
+          or
+sudo nano /etc/hosts
+127.0.1.1 [name]
 
+#Drivers are specific to the chipset used by the wireless NIC. Common chipsets are: Atheros, Mediatek, Broadcom, Realtek. Listed from most reliable to least.
+  #You would use the command:
+lsusb
+  #to identify whether your operating system recognizes the drivers your NIC is using.
 
+#This command is used to display driver and firmware information for a specified interface.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+sudo ethtool -i [interface]
 
 #this command allows you to see the real-time ip connections in your computer.
 watch ip link
 
+#Aircrack-ng Suite. This is is a suite of tools used for auditing wireless networks. It can monitor, attack, test, and crack.
+  #Installation and Config
+
+#You are going to have to download a ton of dependencies based off of your OS. I did this off on Debian/Ubuntu so that's what I have there. These dependencies can be found within the "INSTALLING" file on the github or in the aircracked-ng file when you install it.
+sudo apt-get update
+sudo apt-get install libtool m4 automake pkg-config
+git clone https://github.com/theweefies/aircracked-ng
+sudo apt-get install build-essential autoconf automake libtool pkg-config libnl-3-dev libnl-genl-3-dev libssl-dev ethtool shtool rfkill zlib1g-dev libpcap-dev libsqlite3-dev libpcre3-dev libhwloc-dev libcmocka-dev hostapd wpasupplicant tcpdump screen iw usbutils
+cd aircracked-ng
+autoreconf -i 
+-./configure
+make
+sudo make install
+
+#PATH is the list of directories the shell searches when you run a command. This lets the shell find executables/scripts located in /usr/local/lib. 
+
+sudo nano /etc/profile
+
+#add the following line to the end. 
+
+PATH=$PATH:/usr/local/lib 
+
+#GPSD is a service daemon that monitors one or more GPSes or AIS receivers attached to a host computer through serial or USB ports, making all data on the location/course/velocity of the sensors available to be queried on TCP port 2947 of the host computer.
+  #Install and Config
+
+sudo apt install gpsd gpsd-clients
+
+#There are multiple ways to verify gps clock. It's really shooter's preference:
+
+gpsmon
+  or
+cgps
+  or
+xgps
+
+#configure your /etc/default/gpsd file with these parameters. The GPSD_OPTIONS portion is put there specifically for the BU-353S4 gps, so remove it if your not using that gps and you're not receiving any gps data.
+
+START_DAEMON=”true” (starts the gpsd on boot) 
+USBAUTO=”true” (allows hot plugging)
+DEVICES=”/dev/ttyUSB0” (tells where to find the gps) 
+GPSD_OPTIONS=”-n -G -b”
+GPSD_SOCKET=”/var/run/gpsd.sock”
+
+sudo systemctl restart gpsd
+
+#use this command as a troubleshooting step. This will search the kernel ring buffer messages (dmesg) for logs related to the device ttyUSB0 and output whether the device was successfully recognized and the gps puck was attached.
+
+sudo dmesg | grep ttyUSB
 
 #Basic Aircrack-ng
 

@@ -1,0 +1,265 @@
+man ethtool
+  559  lsusb
+  560  iwconfig
+  561  sudo ethtool -i wlp0s20fu2
+  562  sudo ethtool -i wlp0s20f0u2
+  563  clear
+  564  man aircrack-ng
+  565  sudo apt install gpsd gpsd-clients
+  566  man ethtools
+  567  lsusb
+  568  xgps
+  569  cgps
+  570  gpsmon
+  571  clear
+  572  sudo nano /etc/default/gpsd 
+  573  sudo systemctl restart gpsd
+  574  sudo nano /etc/default/gpsd 
+  575  sudo systemctl restart gpsd
+  576  gpsmon
+  577  man gpsmon
+  578  gpsmon //dev/ttyUSB0
+  579  sudo dmesg | grep /dev/ttyUSB0
+  580  gpsmon //dev/ttyUSB0
+  581  clear
+  582  xgps
+  583  cgps
+  584  sudo dmesg | grep /dev/ttyUSB0 | tee 
+  585  clear
+  586  history
+  587  sudo dmesg | grep /dev/ttyUSB0 | tee test
+  588  ls
+  589  cat test
+  590  rm test
+  591  rm pooki.txt pooki.txt.bak sand123.txt
+  592  ls
+  593  rm pookie.txt.bak 
+  594  rm sorted.txt 
+  595  rm techmint.txt 
+  596  ls
+  597  clear
+  598  sudo apt-get update
+  599  sudo apt-get install libtool m4 automake pkg-config
+  600  sudo apt-get install libtool m4 automake pkg-config
+  601  git clone https://github.com/theweefies/aircracked-ng
+  602  ls
+  603  cd aircracked-ng/
+  604  autoreconf -i
+  605  ./configure
+  606  sudo make
+  607  apt install g++
+  608  sudo apt install g++
+  609  sudo make
+  610  man make
+  611  ls
+  612  ./configure
+  613  ls
+  614  cd scripts
+  615  ls
+  616  cd ..
+  617  ls
+  618  cat INSTALLING 
+  619  sudo apt-get install build-essential autoconf automake libtool pkg-config libnl-3-dev libnl-genl-3-dev libssl-dev ethtool shtool rfkill zlib1g-dev libpcap-dev libsqlite3-dev libpcre3-dev libhwloc-dev libcmocka-dev hostapd wpasupplicant tcpdump screen iw usbutils
+  620  make
+  621  ./configure
+  622  make
+  623  make install
+  624  sudo make install
+  625  sudo nano/etc/profile
+  626  sudo nano /etc/profile
+  627  reboot
+  628  sudo nano /etc/profile
+  629  sudo ldconfig
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#this command allows you to see the real-time ip connections in your computer.
+watch ip link
+
+
+#Basic Aircrack-ng
+
+#This command downloads and updates the database of MAC address manufacturer information for the Aircrack-ng suite of tools.
+
+sudo airodump-ng-oui-update
+
+#This will allow you to change your card into monitor mode
+sudo airmon-ng check kill
+sudo airmon-ng start [interface]
+
+#Start a simple broad survey 
+sudo airodump-ng -b abgx -g -w [name or relative file path] -W -M [interface]
+  #-b or --band is bands, -g or --gpsd is gpsd, -w is file creation -M or --manufacturer is OUI ID, -z can be used to highlight a target MAC
+#other useful flags are: 
+  #-U is uptime, -W or --wps is wps column display, -f is speed of channel spacing (200 = driving, 2000 = slow walking)
+
+#pressing tab while the survey is running will let you move through the data. pressing "m" will let you change the color of information fields to maintain situational awareness.
+
+#conducting a targeted survey
+sudo airodump-ng -c [CH(s)] -d [Target MAC] -w [name or relative file path] -g -W -M [interface]
+  #-c is channel, -d is bssid
+
+#Kismet Config and Usage
+  #found at https://www.kismetwireless.net/packages/
+
+#Installation information
+
+wget -O - https://www.kismetwireless.net/repos/kismet-release.gpg.key --quiet | gpg --dearmor | sudo tee /usr/share/keyrings/kismet-archive-keyring.gpg >/dev/null
+echo 'deb [signed-by=/usr/share/keyrings/kismet-archive-keyring.gpg] https://www.kismetwireless.net/repos/apt/git/noble noble main' | sudo tee /etc/apt/sources.list.d/kismet.list >/dev/null
+sudo apt update
+sudo apt install kismet
+
+#Select "yes" when it asks about suid-roots.
+
+#set the /etc/kismet/kismet_site.conf because this is going to be our master logging file for the rest in this directory.
+
+sudo nano /etc/kismet/kismet_site.conf
+
+#Now, we're going to open another file, i.e., the logging file
+
+sudo nano /etc/kismet/kismet_logging.conf
+
+#copy and paste the log_title and optionally the enable_logging fields into kismet site conf.
+#set your log types to all of the available and then copy and paste into your site config:
+
+# All logs can be disabled; this will disable logging system-wide.  Generally this
+# should be left set to 'true'; logging can be turned off when Kismet is started 
+# with the '-n' command line argument
+enable_logging=true
+
+
+# Default log title, can be overridden with the '-t' argument to Kismet
+log_title=Kismet
+
+# Default location for logs; by default this is the directory Kismet was launched
+# in, but the logs can be automatically stored in other directories as well.
+# The directory must exist before Kismet is started - Kismet will /not/ create
+# the directory list itself.
+log_prefix=[set your working directory]
+
+#MAKE SURE TO SET THE ABSOLUTE FILE PATH OR YOUR KISMET WILL FUCK UP IF YOU
+
+# By default, Kismet only enabled the unified 'kismet' log; the pcapng option is
+# provided for special configurations as a legacy fallback mode.
+log_types=kismet,pcapppi,pcapng
+
+#enter the kismet_filter.conf and prepare to do more of the same:
+
+# BTLE random MAC filtering
+#
+# BTLE incorporates a randomized MAC address model; devices using random MACs will 
+# advertise services with a constantly-changing MAC address.  This can flood the logs
+# with single-packet devices.
+#
+# Turning on BTLE Random filtering will *ignore all btle devices with a random mac*. 
+# These devices *will not be logged as devices or shown in the ui*, however their
+# packets will still be logged in kismetdb and pcap.
+#
+# Filtering BTLE random devices will prevent a huge overflow of devices in the log and
+# UI, however it will also prevent these devices from being shown.
+
+btle_ignore_random=true
+
+# Specific devices can be included or excluded from logging based on MAC
+# address.  This will filter all devices of that MAC from the log; they
+# will still be tracked, but will not be written to the log.
+# kis_log_device_filter=phyname,macaddress,value
+#
+# MACs can be specified as single MACs or as masked MAC groups
+#
+kis_log_device_filter=IEEE802.11,aa:bb:cc:dd:ee,pass
+kis_log_device_filter=IEEE802.11,11:22:33:00:00:00/FF:FF:FF:00:00:00,block
+
+#where those aa:bb:cc... etc is where your whitelisted (team) MACs should go in the block section.
+#Same thing with the packet:
+
+# Packets can be included or excluded from logging based on MAC address by
+# source, destination, network, or other; the exact meaning of these
+# addresses depends on the PHY type.  For Wi-Fi, the 'other' address is used
+# only in WDS 4-mac environments.
+# Additionally, packets may be matched on 'any' address.
+# Packet filters are defined as:
+# kis_log_packet_filter=phyname,addresstype,macaddress,value
+
+kis_log_packet_filter=IEEE802.11,source,aa:bb:cc:dd:ee,pass
+
+# Filters can also use MAC address group matches:
+kis_log_packet_filter=IEEE802.11,any,11:22:33:00:00:00/ff:ff:ff:00:00:00,block
+
+#onto the kismet_alerts.conf:
+
+# Device alerts
+# Kismet can raise alerts when a device is seen for the first time (or seen again
+# after being idle) via the 'devicefound' alert.
+#
+# Masked MAC addresses may be used to match all devices which fall within
+# the mask, for instance 00:11:22:00:00:00/FF:FF:FF:00:00:00 will match 
+# the first 3 bytes of the MAC
+# devicefound=00:11:22:33:44:55
+
+#Next is Kismet.conf for gps and virtual gps:
+
+# How fast do we hop channels?  Time can be hops/second or hops/minute.
+channel_hop_speed=5/sec
+
+# Kismet supports multiple types of GPS.  Generally you should only activate one of these
+# options at a time.
+#
+# Only one process can open a serial or USB device at the same time; if you are using GPSD,
+# make sure not to configure Kismet on the same serial port.
+#
+# For more information about the GPS types, see the documentation at:
+# https://www.kismetwireless.net/docs/readme/gps/
+#
+# gps=serial:device=/dev/ttyACM0,name=laptop
+# gps=tcp:host=1.2.3.4,port=4352
+gps=gpsd:host=localhost,port=2947
+# gps=virtual:lat=123.45,lon=45.678,alt=1234
+# gps=web:name=gpsweb
+
+#we want to make sure that gpsd is uncommented once we put it into the site.conf.
+#Now make sure to save the config file and save a copy externally.
+
+
+
+
+
+
+
+
+
+
+
+

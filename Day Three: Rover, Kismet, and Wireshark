@@ -88,12 +88,16 @@ Toggle RaGe
 [Target Name] > Edit > Clear Locations
 #Start the playback or begin your operation 
 
+#Newer Rover Fixes. On newer versions of Rover, they have removed the option to geolocate only targets. Here's a fix for that.
+
+802.11 Survey Panel > Options > Display > Emitter Panel Default Options & Color > Outline Emitters in Pane & Show All Data for Selected Emitters Only
+
 #Mobile Emitter Analysis Tool (MEAT) is used to identify trends within a drive test, perhaps in terms of stations usually found in differing locations were seen in the same one, or perhaps counter-surveillance. This can help identify that.
 
 Mobile Emitter Analysis > "+" > Event1 > Change Area -- Get Rectangle > Event2 > Change Area -- Get Rectangle > Calculate 
 Results > "Results match at least 2 Events"
 
-
+#You can also use the Management/Details table found on a MAC Adress to see a very in-depth table of data points that were collected on it.
 
 
 

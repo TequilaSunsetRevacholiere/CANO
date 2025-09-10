@@ -1,9 +1,86 @@
 #Rover
-  #make the file executable and then run it.
+  #first you have to install a dependency, then make the file executable and then run it.
 
+sudo apt install libxcb-cursor0
 sudo chmod 755 linux-ROVER-4.24.1.run
 ./linux-ROVER-4.24.1.run
-  #you're gonna have to enter the passcode, and set ROVER to install in your home directory.
+  
+#you're gonna have to enter the passcode, and set ROVER to install in your home directory. 
+#Once that's installed, move into the ROVER folder that you've installed and head into the sub-directory in there. Then, run the application.
+
+cd ROVER64-4.24.1-gcc1050-hf1/
+./ROVER
+
+#Create a symbolic link to the application into the /usr/local/bin/.
+
+sudo ln -s /home/a28/ROVER/ROVER64-4.24.1-gcc1050-hf1/ROVER /usr/local/bin/rover
+
+#Now you can run the application just by typing:
+
+rover
+
+#This works the same way for anything else you want to link. Scripts, Appllications, etc.
+
+Preferences > General > Contents > "Save mission contents to file on exit" and "Restore mission contents from file on startup"
+
+#you can view your various annotations by going into the hidden rover directory:
+
+ls -a
+  or
+la
+cd .rover/database/
+
+#Kismet-Rover setup
+  #Emmitter Panes
+
+Emmitter Pane > New Emmitter/Channel View 
+
+#You will create two panes for 802.11 information. One for survey and the other for targets.
+  #Create a filter within the Targets pane with these parameters to filter for only targets:
+
+and
+  matches any ROVER Target = True
+
+#You can create targets in multiple ways:
+  #You can do it from the Mission Contents Panel:
+
+Mission Contents > Targets > Create 
+    #Change "Normal" to "Auto SSID". Auto SSID is case sensitive, so keep that in mind as well.
+    #Auto SSID's Event set to all will event all Probe Requests/Responses and that can quickly become untenable. So keep that in mind as well.
+
+  #You can do it from the 802.11 Survey Panel that you created previously. You can either find the AP of your choosing and locate its BSSID that will end in "...._AP"
+
+
+
+  #Connecting and Piping Kismet Data
+    #you must have an active session of kismet running. On Rover:
+
+Connection > Hardware > PCAP Stream 
+  Connection Type: kismet
+  hostname: localhost
+  host port: 2501
+  Authentication > user: kismet pass: kismet
+
+#If your system keeps disconnecting, and you are running multiple NICs, there may be collisions with differing chipsets that causes issues.
+
+  #On your specific system options, select Network Suvey. This will generate .rns files which are exponentially smaller than kismet files. This is important because Rover's processing capability slows when a large amount of data is being presented at one time. .rns will mitigate that.
+
+#Drive Test Data Display
+  #Here are some Display Options you can use:
+
+Custom Display: 
+  Selected Fields: SSID, MAC, MAC OUI
+  RSSI Min: -100 dBm
+  RSSI Max: -20 dBm
+
+#Wifi Dashboard
+  # A better way to get a summary view of your wifi survey data
+
+Tools > Wifi Dashboard
+
+
+
+
 
 
 

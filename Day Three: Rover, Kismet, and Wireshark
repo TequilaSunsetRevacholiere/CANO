@@ -1,0 +1,10 @@
+#Rover
+  #make the file executable and then run it.
+
+sudo chmod 755 linux-ROVER-4.24.1.run
+./linux-ROVER-4.24.1.run
+  #you're gonna have to enter the passcode, and set ROVER to install in your home directory.
+
+
+
+

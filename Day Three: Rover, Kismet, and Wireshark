@@ -71,12 +71,28 @@ Connection > Hardware > PCAP Stream
 Custom Display: 
   Selected Fields: SSID, MAC, MAC OUI
   RSSI Min: -100 dBm
-  RSSI Max: -20 dBm
+  RSSI Max: -30 to -50 dBm
 
 #Wifi Dashboard
   # A better way to get a summary view of your wifi survey data
 
 Tools > Wifi Dashboard
+  Access Points > [SSID of Interest] > Create Target
+
+#RaGe is a tool for Rover that creates a Circular Error of Probability for a target based off of passive collection data points. We're going to create a target first and verify that our options/preferences are correct, then clear any locations the system assigned to the target and start our playback or begin or mobile mission.
+
+[SSID of Interest] > Create Target
+Rage Options > 802.11 > LOBs are optional, the rest are not > Apply
+Tools > Preferences > Targets > "Geolocate only ROVER targets" 
+Toggle RaGe
+[Target Name] > Edit > Clear Locations
+#Start the playback or begin your operation 
+
+#Mobile Emitter Analysis Tool (MEAT) is used to identify trends within a drive test, perhaps in terms of stations usually found in differing locations were seen in the same one, or perhaps counter-surveillance. This can help identify that.
+
+Mobile Emitter Analysis > "+" > Event1 > Change Area -- Get Rectangle > Event2 > Change Area -- Get Rectangle > Calculate 
+Results > "Results match at least 2 Events"
+
 
 
 

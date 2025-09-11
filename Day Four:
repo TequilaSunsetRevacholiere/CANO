@@ -175,5 +175,8 @@ sudo nano /etc/[user]/.bashrc
 alias wg_up='sudo wg-quick up laptop-wg0'
 alias wg_up='sudo wg-quick down laptop-wg0
 
+#save the changes and the run source, so that the computer will reread the .bashrc file to recognize the changes.
+
+source ~/.bashrc
 
 

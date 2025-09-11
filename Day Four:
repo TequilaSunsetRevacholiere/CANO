@@ -160,6 +160,20 @@ sudo wg-quick up laptop-wg0
 
 #now test the connection.
 
-ping 10.0.0.1
-#ifconfig should display laptop-wg0 as an interface.
+iconfig #ifconfig should display laptop-wg0 as an interface with an ip of 10.0.0.3
+ping 10.0.0.1 #you should be receiving packets.
+
+#ssh into the VPN server via the Wireguard IP address. We want to do it this way every time now. 
+
+ssh -i ~/.ssh/[Key Name].pem ubuntu@10.0.0.1
+
+#You need to have the VPN up on your laptop utilizing wg-quick before you can ssh into the VPS using the laptop IP of address of 10.0.0.1, because if you don't you won't have the tunnel connected and how are you going to cross the threshold with no bridge/tunnel to get you through?
+
+#Create a bash alias in the ~/[user]/.bashrc directory to streamline the process of turning on the laptop tunnel.
+
+sudo nano /etc/[user]/.bashrc
+alias wg_up='sudo wg-quick up laptop-wg0'
+alias wg_up='sudo wg-quick down laptop-wg0
+
+
 

@@ -179,4 +179,17 @@ alias wg_up='sudo wg-quick down laptop-wg0
 
 source ~/.bashrc
 
+#We're going to now completely streamline getting into the VPS by creating an SSH Config file within the .ssh/ directory
 
+sudo nano ~/.ssh/config
+
+#now fill it with these parameters: 
+
+HOST vpn
+Hostname 10.0.0.1
+User ubuntu
+IdentityFile ~/.ssh/aws3.pem
+
+#Then op check it:
+
+ssh vpn

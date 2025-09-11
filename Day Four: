@@ -1,0 +1,165 @@
+#Screen
+  #Screen is a terminal multiplexer that allows users to manage multiple virtual terminal sessions within a single physical terminal or remote session. You can then detach it from that "screen" and the process will continue to run.
+
+sudo apt install screen
+
+#This creates a new screen with whatever name you give it. It will give you a "New Screen..." pop-up and your host:group icon should be white rather than green.
+
+screen -R [name]
+
+#This command detaches the screen. it will say "detached from [process].[name]".
+
+ctl-a d
+
+This lists out all of the active names.
+
+screen -list
+
+#Redoing this command will reattach the named screen.
+
+screen -R [name]
+
+#This command will terminate a reattached sceen, but only when attached.
+
+ctl-a k
+
+#File Types
+  #Kismets and pcapppi are really good files for drivetest in Rover. Kismet files are heavy though and will eventually bog down processing power. Pcapppi are geo-rectified pcap files.
+  #pcap and pcap-ng work well in Wireshark, but are not geo-rectified and will not go into ATAK or Rover.
+  #Kismet-nextml needs to converted into a .rns file to work in Rover.
+
+#Mergecap
+  #Mergecap is a command to merge numerous pcap files together to conduct analysis on the breadth of it.
+
+mergecap -w [output].pcap [input file 1] [input file 2] [input file ...] 
+
+#pcapfix
+  #pcapfix is, as the name implies, a method to attempt and fix corrupted/damaged pcap files when merging does not work perfectly.
+
+sudo apt install pcapfix -y
+pcapfix -d -n [input file] -o [(optional) output file name] 
+
+#Mac Changer
+  # Mac Changer is a utility that makes the maniputation of MAC addresses of network interfaces easier. 
+
+sudo apt install macchanger -y
+#(on laptop) Mac Change automatically? No.
+#(on Pi) Mac Change automatically? Yes.
+
+  #Changing MACs. We will bringing the interface down and manually changing its name to wlan1.
+
+sudo ip link set [interface] down && sudo ip link set [interface] name wlan1
+
+#This is to bring wlan1 down, then change the MAC, set it to monitor mode, and bring it back up.
+  #you can use -r to randomize the mac as well.
+
+sudo ip link set wlan1 down && \
+sudo macchanger -m fc:c7:34:0a:44:a2 wlan1 && \
+sudo iw dev wlan1 set type monitor && \
+sudo ip link set wlan1 up && \
+iw dev wlan1 info
+
+#Virtual Private Servers (VPSs) and Virtual Private Networks (VPNs)
+  #Establishes a secure, encrypted connection over a public network like the internet, hiding your IP address and encrypting your traffic to protect your data, online identity, and privacy from third parties.
+    # Navigate to aws.amazon.com/lightsail, which is a simplified Virtual Private Server (VPS) service by Amazon Web Services (AWS) that bundles virtual machines, storage, databases, and networking into fixed-price plans for quickly launching websites and web applications.
+
+Sign in to console
+enter user credentials (IAM ID, username, password)
+Select "Lightsail"
+
+#this is the management console for Lightsail. We are going to create a new instance to set up our VPN service.
+
+Create a New Instance
+Select your instance locations
+Select your Blueprint -- Operating Systems (OS) only
+Select Create Custom Key
+Name the key and download it #THIS WILL ONLY DOWNLOAD ONCE SO SAVE IT.
+
+#look into the Downloads folder and copy your .pem key into the hidden .ssh/ folder
+
+cd ~/Downloads
+cp [Key Name].pem ~/.ssh/
+
+#Back to Lightsail
+
+Select Pricing Size
+Identify your instance #Name it whatever you want.
+Create Instance
+
+#Tunneling
+  #We are going to use Wireguard to create our VPN and create our tunnels.
+    #We are going into the .ssh/ directory again and change the permissions of the AWS key.
+
+chmod 400 [Key Name].pem #This is giving read permissions.
+
+#Next, we're going to ssh into the Virtual Private Server. Everything is case sensitive, so keep that in mind. If you messed it up, every attempted fingerprint is saved to the known_hosts file. Remove that file and try again; this time do it correctly.
+
+ssh -i ~/.ssh/[Key Name].pem ubuntu@[IP Address of VPS]
+
+#We are now directly inside the VPS that we created. We're gonna update it and install a few dependencies.
+
+sudo apt update && sudo apt uprade -y
+sudo apt install curl bash resolvconf
+  #curl is used in command lines or scripts to transfer data in the same vein as wget.
+  #Bash is an interactive command interpreter and programming language developed for Unix-like operating systems. It is designed as a 100% free alternative for the Bourne shell, `sh`, and other proprietary Unix shells.
+  #The resolvconf program maintains the system information about the currently available name servers and manages the contents of the configuration file resolv.conf, which determines Domain Name System (DNS) resolver parameters.
+
+sudo su #don't do this normally, it's just easier to run these next few scripts.
+
+#This is used to obtain wireguard script for its installation, then making it executable so we can run it using bash in order to ready the Wireguard service onto your server.
+
+curl https://raw.githubusercontent.com/complexorganizations/wireguard-manager/main/wireguard-manager.sh --create-dirs -o /usr/local/bin/wireguard-manager.sh
+chmod+x /usr/local/bin/wireguard-manager.sh
+bash /usr/local/bin/wireguard-manager.sh
+
+#Wireguard Options
+
+Subnet Choice [1:2]: "2"
+Custom IPv4 Subnet: 10.0.0.0/24
+Subnet Choice [1:2] "2"
+Custom IPv6 Subnet: fd00:00:00::0/24
+
+#Press 1 for all of the options until you get to the DNS Provider. If "Unbound", select 2 and select the Cloudflare option.
+#Set the Client Name to "phone".
+#Continue with the recommended until you see the QR Code. Now you need to download the Wireguard application on your personal device. Because you chose the client as "phone"
+#Scan the QR code on your phone and activate the VPN Tunnel.
+#Name the Tunnel whatever you want. We're going to need to add a rule into the VPS' firewall in order to allow data to pass through the tunnel into the VPS.
+
+#VPS Firewall Configuration
+
+Go to your VPS > 3 DOTS > Manage > Networking > "Add Rule"
+Application: Custom, Protocol: UDP, Port: 51820 > Create
+
+#These configurations that are being made can be found in the VPS at /etc/wireguard/clients/
+
+#we're going to need another VPN configuration for our laptop.
+
+bash /usr/local/bin/wireguard-manager.sh
+5.) Add a new Wireguard peer (client) 
+New client peer:laptop
+sudo ls /etc/wireguard/clients/ > laptop-wg0.conf
+
+#Now, we have to take the laptop configuration and put it into our home/ubuntu/ directory in order to grab our configs for the laptop out of the server with our computer proper.
+
+cp /etc/wireguard/clients/*.conf /home/ubuntu/
+ls /home/ubuntu/
+
+#ON YOUR LAPTOP, we are going to install wireguard and its dependencies in order to ultimately add and utilize the tunnels we created for our laptop.
+
+sudo apt install wireguard jq resolvconf
+
+#Pull the configs from the VPS
+  #We will do this by conducting a Secure Copy utilizing our ssh user credentials searching the VPS' home directory for any .conf files, then copying it to the /etc/wireguard directory on the laptop.
+    #Secure Copy is a command-line utility used to securely copy files and directories between a local host and a remote host. The ":" is used as a way to direct the terminal on where to go and what to look for.
+
+sudo scp -i ~/.ssh/[Key Name].pem ubuntu@[IP Address of VPS]:~/*.conf /etc/wireguard
+
+#to bring up/enable the Wireguard VPN utilizing the configuration we created, use this:
+
+sudo wg-quick up laptop-wg0
+
+#now test the connection.
+
+ping 10.0.0.1
+#ifconfig should display laptop-wg0 as an interface.
+

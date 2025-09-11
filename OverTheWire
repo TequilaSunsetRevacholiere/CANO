@@ -31,3 +31,27 @@
     #-d is the basic operator for decode
 #OverTheWire11
   cat Data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' 7x16WNeHIi5YkIhWsfFIqoognUTyj9Q4
+#OverTheWire12
+  mktemp -d
+  /tmp/tmp.YBM8hlb3oC
+  cp data.txt /tmp/tmp.YBM8hlb3oC
+  cd /tmp/tmp.YBM8hlb3oC
+  mv data.txt data1.txt
+  xxd data1.txt 
+    #you will see that the "1f 8b 08 08" is correlated to the GZIP file signature at https://filesig.search.org/
+  mv data1.txt data1.gz
+  gzip -d data1.gz
+  xxd data1
+    #you will see that the "42 5a 68" is correlated to the BZIP2 file signature at https://filesig.search.org/
+  mv data1 data1.bz2
+  bzip2 -d data1.bz2
+  xxd data1
+    #you will see that the "1f 8b 08 08" is correlated to the GZIP file signature at https://filesig.search.org/, BUT you can see the data5.bin archive
+  tar -xf data5.bin
+  xxd data5 
+    #you will see there's another archive inside this one called data6.bin
+  tar -xf data6.bin
+    #you will see that the "1f 8b 08 08" is correlated to the GZIP file signature at https://filesig.search.org/
+  mv data6.bin 
+  
+  

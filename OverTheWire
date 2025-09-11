@@ -51,7 +51,7 @@
   xxd data5 
     #you will see there's another archive inside this one called data6.bin
   tar -xf data6.bin
-    #you will see that the "1f 8b 08 08" is correlated to the GZIP file signature at https://filesig.search.org/
-  mv data6.bin 
-  
-  
+    #you will see there's another archive inside this one called data6.bin.out
+  tar -xf data6.bin.out
+    #you will find a file named data 8
+  cat data 8 FO5dwFsc0cbaIiH0h8J2eUks2vdTDwAn

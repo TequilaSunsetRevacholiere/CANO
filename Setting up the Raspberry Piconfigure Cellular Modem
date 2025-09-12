@@ -1,0 +1,160 @@
+#Setting up the Raspberry Pi
+  #Contents:
+    Raspberry Pi 4 Model B
+    SanDisk Extreme 32Gb
+    Sixfab 3G/4G-LTE Base HAT
+    Quectel EG25/EC25 Mini PCIe 4G/LTE Module
+    Pulse W3906XXXX LTE/GPS adhesive antenna
+    Antenova SRFL029 LTE adhesive antenna
+    Cellular SIM Card
+
+  #Generating SSH Keys
+    #The reason is that the moment we write the Raspbian OS, we want a quick method of getting into the Pi. We'll be creating a private key.
+
+cd ~/.ssh
+ssh-keygen -t rsa -b 4096
+  #-t = type of key
+  #-b = number of bits in the key
+cat id_rsa.pub
+  #this is the public key
+
+  #Download Raspberry Pi Imager
+    #We're going to download RASPBERRY PI OS LITE (64BIT)
+
+sudo apt-install rpi-imager
+Raspberry Pi Device: Pi 4
+Operating System: RPi OS Lite (64-Bit)
+Storage: 32Gb Micro SD
+
+  #We're going to apply OS customisation settings
+
+Edit Settings >
+General:
+  hostname: pi
+  user/pass: pi/raspberry
+Services:
+  Enable SSH
+  Allow public-key authentication only:
+    #Copy and paste the id_rsa.pub from your .ssh/ directory. The entire thing.
+  "Save"
+
+    #The imager will then start writing the OS and the settings. This will take a little bit.
+
+#Connecting to the Pi
+  
+  Enter the Network Settings
+    Go into the IPv4
+      Select "Shared to Other Computers"
+    Go into the IPv6 
+      Disable IPv6
+  
+  #Connect an ethernet cable from the pi to your laptop and power the pi. You want to see the ? when arping.
+
+arp -a > ? (10.42.0.195)
+ssh -i id_rsa pi@[IP Address]
+
+  #update and upgrade
+
+sudo apt update && sudo apt upgrade -y
+
+#Configuring the Operating System
+ 
+sudo raspi-config 
+
+#You have to select things by moving to the desired setting, hitting Tab, and pressing Enter over "Select"
+
+1. System Options > S3 Password > set it to what you want
+1. System Options > S4 Hostname > set it to what you want
+3. Interface Options > I1 SSH > Enable
+5. Localisation Options > L1 Set Locale > remove GB and select en_us
+5. Localisation Options > L2 Change Timezone > US > New York
+5. Localisation Options > L4 WLAN Country > US
+6. Advanced Options > A1 Expand File System
+6. Advanced Options > A2 Interface Names > Yes
+Finish
+
+#Harden SSH
+  #We do this by modifying the ssh configuration to make the remote more secure. We're going to make a backup of the config file too.
+
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+sudo nano /etc/ssh/sshd_config
+  #Change these parameters: Uncomment the AdressFamily command and swap "any" with "inet". This is so that the Address Family must be an IPv4 connection.
+    #Port 22
+    AddressFamily inet
+    #ListenAddress 0.0.0.0
+    #ListenAddress ::
+
+  #Change these parameters: Uncomment the PermitRootLogin command and swap "prohibit-password" with "no". Uncomment PubkeyAuthentication and make sure it says "yes." Make sure 
+    
+    #LoginGraceTime 2m
+    PermitRootLogin no               
+    #StrictModes yes
+    #MaxAuthTries 6
+    #MaxSessions 10
+
+    PubkeyAuthentication yes
+
+  #Make sure that the PassworAuthentication is uncommented with "no".
+
+    # To disable tunneled clear text passwords, change to no here!
+    PasswordAuthentication no
+    #PermitEmptyPasswords no
+
+#Installing Wireguard
+
+sudo apt install wireguard resolvconf -y
+
+  #IN THE LAPTOP we're going to send the pi config to the pi using scp.
+
+sudo scp -i ~/.ssh/id_rsa /etc/wireguard/pi-wg0.conf pi@10.42.0.195:~
+
+  #IN THE PI check that its there, and if it is then bully for you! Now you can copy the config to /etc/wigreguard.
+
+sudo cp pi-wg0.conf /etc/wireguard
+ls /etc/wireguard
+sudo wg-quick up pi-wg0
+
+  #We're going to set wireguard to turn on automatically when the pi powers on.
+
+sudo systemctl enable wg-quick@pi-wg0
+
+#configure Cellular Modem
+  #We're going to be using a program called "minicom" which is used to send AT commands to the modem to configure network settings and GPS.
+
+sudo apt install minicom -y 
+
+  #modemmanager can conflict with us cofiguring the modem so we have to purge it.
+
+sudo apt purge modemmanager -y
+
+  #We'll install atcom for AT command scripting and quick troubleshooting of modem configuration.
+
+sudo apt install python3-pip
+
+  #This "--break-system-packages" flag is a deliberate override of the externally-managed-environment error, which prevents pip from installing packages directly into the system's Python environment. This flag acknowledges the potential risks of modifying system-managed Python packages, such as breaking system utilities or creating conflicts with packages installed via the system's package manager.
+
+sudo pip3 install atcom--break-system-packages
+
+  #connect to the modem. These minicom commands are going to be strange. Just go with it.
+
+sudo minicom -b 115200 -D /dev/ttyUSB2
+  #select "local echo on/off" and have it "on"
+  #type "at" to test the echo
+  #check the firmware version with "at+qgmr?". You don't want it to be 30.006.30.006.
+
+#We're going to set the correct APN for the cell network.
+  AT+CGDCONT=1,"IPV4V6","fast.t-mobile.com"
+
+#We're going to set the modem up for ECM mode. This may reset the module.
+  AT+QCFG="usbnet",1
+
+#Now we're going to reboot the modem so the new settings can take effect. You can 
+  AT+CFUN=1,1
+
+#From the pi, we need to ping google.
+
+ping -I [eth interface] 8.8.8.8
+
+#Now remove the ethernet and ssh into the pi over the cellular network.
+
+  ssh -i /.ssh/id_rsa pi@[PI Address]

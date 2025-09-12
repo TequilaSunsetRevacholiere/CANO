@@ -158,3 +158,20 @@ ping -I [eth interface] 8.8.8.8
 #Now remove the ethernet and ssh into the pi over the cellular network.
 
   ssh -i /.ssh/id_rsa pi@[Raspberry Pi WireGuard IP Address]
+
+
+#General Minicom Troubleshooting
+  #Modem Firmware Version
+AT+QGMR?
+  #Check that the SIM is detected by the module.
+AT+CPIN? > "READY"
+  #Check signal strength and error rate
+AT+CSQ
+  #Check registration status and network information
+AT+COPS?
+  #Check the configuration of the module.
+AT+QCFG="usbnet" > "1"
+  #Check if the module is registered to the network.
+AT+CREG? > "0,1" or "0,5"
+  #Check is the APN is correct and you have an IP Address.
+AT+CGCONTRDP > [APN details and IP Address]

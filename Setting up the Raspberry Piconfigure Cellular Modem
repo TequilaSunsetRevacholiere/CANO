@@ -142,14 +142,32 @@ sudo minicom -b 115200 -D /dev/ttyUSB2
   #type "at" to test the echo
   #check the firmware version with "at+qgmr?". You don't want it to be 30.006.30.006.
 
-#We're going to set the correct APN for the cell network.
-  AT+CGDCONT=1,"IPV4V6","fast.t-mobile.com"
+  #We're going to set the correct APN for the cell network.
 
-#We're going to set the modem up for ECM mode. This may reset the module.
-  AT+QCFG="usbnet",1
+AT+CGDCONT=1,"IPV4V6","fast.t-mobile.com"
 
-#Now we're going to reboot the modem so the new settings can take effect. You can 
-  AT+CFUN=1,1
+  #We're going to set the modem up for ECM mode. This may reset the module.
+
+AT+QCFG="usbnet",1
+
+  #Now we're going to reboot the modem so the new settings can take effect.
+
+AT+CFUN=1,1
+
+#Configuring GPS in Minicom
+  #This only needs to be done once.
+
+  #Turn on GPS:
+
+AT+QGPS=1 > "OK"
+
+  #Turn on GPS at boot:
+
+AT+QGPSCFG="autogps",1 > "OK"
+
+  #Check GPS state:
+
+AT+QGPS? > "1"
 
 #From the pi, we need to ping google.
 
@@ -158,7 +176,6 @@ ping -I [eth interface] 8.8.8.8
 #Now remove the ethernet and ssh into the pi over the cellular network.
 
   ssh -i /.ssh/id_rsa pi@[Raspberry Pi WireGuard IP Address]
-
 
 #General Minicom Troubleshooting
   #Modem Firmware Version

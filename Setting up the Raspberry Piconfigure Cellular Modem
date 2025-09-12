@@ -177,6 +177,52 @@ ping -I [eth interface] 8.8.8.8
 
   ssh -i /.ssh/id_rsa pi@[Raspberry Pi WireGuard IP Address]
 
+#Configuring GPS.
+  #We're going to edit the gpsd config file so the pi can listen to the GPS stream which is pushed over ttyUSB1.
+
+
+sudo apt install gpsd gpsd-clients
+sudo nano /etc/default/gpsd
+
+#Input these parameters:
+
+  # Devices gpsd should collect to at boot time.
+  # They need to be read/writeable, either by user gpsd or the group dialout.
+DEVICES="/dev/ttyUSB1"
+
+  # Other options you want to pass to gpsd
+GPSD_OPTIONS=""
+
+  # Automatically hot add/remove USB GPS devices via gpsdctl
+USBAUTO="true"
+
+  #Start GPSD automatically at boot
+START_DAEMON="true"
+
+#SSH alias for Pi
+
+sudo nano ~/.ssh/config
+  HOST pi
+  Hostname 10.0.0.10
+  User pi
+  IdentityFile ~/.ssh/id_rsa
+
+  #verify that it worked.
+
+ssh pi
+
+#Turning off Bluetooth and On-Board WiFi
+
+sudo nano /boot/firmware/config.txt
+
+#add the following:
+
+[all]
+dtoverlay=disable-wifi
+dtoverlay=disable-bt
+
+  #Reboot the Pi, SSH back into it, and view ifconfig to verify that wlan0 is not there.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+
 #General Minicom Troubleshooting
   #Modem Firmware Version
 AT+QGMR?

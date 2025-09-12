@@ -157,4 +157,4 @@ ping -I [eth interface] 8.8.8.8
 
 #Now remove the ethernet and ssh into the pi over the cellular network.
 
-  ssh -i /.ssh/id_rsa pi@[PI Address]
+  ssh -i /.ssh/id_rsa pi@[Raspberry Pi WireGuard IP Address]

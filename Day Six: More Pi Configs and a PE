@@ -1,0 +1,19 @@
+#Raspberry Pi Config contd.
+
+sudo raspi-config > 6. Advanced Options > 2. Network Interface Names > No
+  #you'll see that the interface names are "now" predictable.
+
+#Installing More Applications
+  #Install MacChanger and Aircracked-ng onto the pi. This next command will load the configs for the dependencies we installed and made.
+
+sudo ldconfig 
+
+  #Install the Debian Bookworm version of Kismet. Log in to the browser for the pi using:
+
+[Pi IP Address]:2501
+
+#Transferring Kismet_Site.conf to the pi
+  #Make a backup of the config file first. Then Secure Copy it to the Pi.
+
+sudo cp /etc/kismet/kismet_site.conf /etc/kismet/kismet_site.conf.bak
+sudo scp -i ~/.ssh/id_rsa /etc/kismet/kismet_site.conf pi@[Pi IP Address]:~

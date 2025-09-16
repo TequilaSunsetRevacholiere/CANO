@@ -1,0 +1,101 @@
+#Installing Wireshark
+  #Wireshark is used to capture, inspect, and analyze network traffic to troubleshoot network problems, detect security vulnerabilities, and understand network communication. Wiresharks pipes data from a capture file or directly from your monitor-mode interface.
+
+sudo apt install wireshark
+
+#Mergecap and pcapfix and kismet_to_... review
+
+mergecap -w [output].pcap [input file 1] [input file 2] [input file ...]
+
+  #pcapfix is pcap only
+
+pcapfix -d [filename].pcap 
+
+sudo kismetdb_to_wiglecsv -i [input].kismet -o [output].csv
+
+#Wireshark Basics
+
+Source Address - Who first sent the packet
+Transmitter Address - Who (WiFi) sent the packet
+Receiver Address - Who (WiFi) received it
+Destination - Where the packet needs to end up
+
+  #Getting Started
+    # Sudo wireshark is what you want so you can do both packet analysis AND have the choice to directly pipe data coming in from your monitor-mode interfaces.
+
+Edit > Preferences > Columns
+Edit > Configuration Profiles > Import > Import From Directory > [your configuration file directory]
+
+#Packet Analysis
+
+802.11 Radio Information > Channel: [CH]
+IEEE 802.11 Beacon Frame > Receiver/Destination/Transmitter/Source
+IEEE 802.11 Wireless Management > Tagged Parameters > 
+  SSID parameter set > SSID
+  HT/VHT/HE Capabilities & Informations > Standard
+  RSN Information > Encryption >
+    #AES (CCM) PSK is WPA2
+    #TKIP is WPA1
+  RSN Information > Group Cipher Suite & Pairwise Cipher Suite
+    #Group/Pairwise Cipher Suite type: AES (CCM) (4) means WPA2
+      #8 is WPA3
+      #(wlan.rsn.gcs.type == 4) && (wlan.rsn.pcs.type == 4)
+  Vendor Specific: Microsoft Corp.: WPS > Wireless Protected State
+    #If it is WPS enabled, look for a probe response after the initial triage to attempt to identify the make & model
+      #Will provide the Manufacturer and Model Name in the WPS information
+  #Input Information into a WifI Mask:
+#====================
+#2.4/5 GHz AP
+#BSSID:
+#OUI:
+#SSID:
+#Channel:
+#IP:
+#Standard:
+#Encrypt:
+#WPS Enabled:
+#Make:
+#Model:
+#PWD/Key:
+#Location: 
+
+  #Filtering Example
+
+wlan.ssid == "[name]" && (wlan.fc.type_subtype == 8 || wlan.fc.type_subtype == 5)
+  #I want to filter by [name] SSID, AND I want to beacon frames OR probe responses
+
+  #Any frame that contains the "SSID" will not have the client information.
+    #Do not look for clients using beacon frames and probe responses.
+  #IPv4 Multicast addresses may confuse you into thinking of them as clients, but they are not. The network is simply sending data to multiple clients at once.
+
+#Decryption Keys in Wireshark and Airdecap-ng
+
+Wireshark: Edit> Preferences > Protocols > IEEE 802.11 > Enable Decryption & Decryption Keys > 
+Create a New Entry > key type: wpa-pwd (WPA2) > Key: [password]:[ssid]
+  #If the decryption isn't immediate, then you should filter by eapol and then remove it to see if it will "shake it out".
+
+airedecap-ng:
+
+airdecap-ng -e [SSID] -p [password] [absolute file path]
+  #it will create a copy of the file with the ending of ...-dec.pcap
+
+#Tshark
+  #This is a Command-line Interface version of wireshark to automate and process filters much faster.
+  #can be combined with bash scripting to automate processes.
+
+tshark -r [input file] -Y '[wireshark display filters wanted]' -T fields -e [columns to be displayed]
+
+e.g., tshark -r ~/Desktop/[directory]/tshark.pcapppi -Y '(wlan.fc.type_subtype==8 || wlan.fc.type_subtype==5) && wlan.ssid=="[ssid]"' -T fields -e wlan.ta -e wlan.ssid -E separator=, -E header=y > [output file name] 
+  #beacon frames and probe responses, then the specific ssid. Then we create two fields: tx address and the ssid, which we modify with the seperator of a "comma" and make them headers.
+    #be wary of utilizing a text editor to pre-save these commands because the text editor and the terminal use a "different" (') and they will not be congruent and it will make it error out. Use a touch file instead.
+#then we're going to sort and uniq this data to remove any repeats bssids into its own file.
+
+sort -u [output file name] | tee [output file name]_uniq
+
+  #you will see that the ssid will be returned in hex, we're going to use xxd to convert the hex into ascii values.
+
+echo [hex ssid] | xxd -r -p
+  #-r is revert hex dump into binary
+  #-p is to output in plain hex dump style
+
+

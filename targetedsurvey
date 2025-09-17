@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#obnoxious preamble
+echo "This is going to run a targeted survey using Airodump-ng with these parameters: --gpsd --wps --manufacturer and write to a file in your home directory." 
+echo "      "
+echo "Lets get the necessities set up."
+echo "           "
+sleep 2
+
+#Time to put in the parameters
+
+read -p "Target BSSID? : " bssid
+read -p "what channel is it on? : " ch
+read -p "which interface? : " wlanINT
+echo "      "
+echo "Happy Hunting!"
+sleep 2
+sudo airodump-ng --channel $ch --bssid $bssid --gpsd --wps --manufacturer -w targeted-survey-and-deauth $wlanINT
+
+

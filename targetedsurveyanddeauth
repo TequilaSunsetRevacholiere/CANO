@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#Open two terminals and run airodump-ng on one and aireplay-ng on the other
+
+gnome-terminal -- bash -c "~/targetedsurvey; exec bash" &
+gnome-terminal -- bash -c "~/deauthtak; exec bash" &

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+ifconfig
+sleep 1
+read -p "you ready yet?"
+
+#Turning off the internal NIC
+echo 'wlp0s20f3'
+sudo ip link set wlp0s20f3 down
+sudo macchanger -r wlp0s20f3
+#black card name change
+sudo ip link set wlp0s20f0u2u1 down &&\
+sudo ip link set wlp0s20f0u2u1 name wlan1
+
+#gold card name change
+read -p "u2 or u3? : " wlan2
+sleep 1
+sudo ip link set $wlan2 down &&\
+sudo ip link set $wlan2 name wlan2
+
+#ax card name change
+sudo ip link set wlp0s20f0u2u2i3 down &&\
+sudo ip link set wlp0s20f0u2u2i3 name wlan3
+
+#Now we're randomizing all of the macs
+sudo ip link set wlan1 down &&\
+sudo macchanger -r wlan1 &&\
+sudo iw dev wlan1 set type monitor &&\
+sudo ip link set wlan1 up &&\ 
+iw dev wlan1 info
+
+sudo ip link set wlan2 down &&\ 
+sudo macchanger -r wlan2 &&\
+sudo iw dev wlan2 set type monitor &&\
+sudo ip link set wlan2 up &&\ 
+iw dev wlan2 info
+
+sudo ip link set wlan3 down &&\
+sudo macchanger -r wlan3 &&\
+sudo iw dev wlan3 set type monitor &&\
+sudo ip link set wlan3 up &&\
+iw dev wlan3 info
+

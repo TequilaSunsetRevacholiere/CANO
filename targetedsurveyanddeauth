@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Open two terminals and run airodump-ng on one and aireplay-ng on the other
+#Open two terminals and run airodump-ng on one and aireplay-ng on the other. You're going to need both of those files in the home directory.
 
 gnome-terminal -- bash -c "~/targetedsurvey; exec bash" &
 gnome-terminal -- bash -c "~/deauthtak; exec bash" &

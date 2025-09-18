@@ -7,6 +7,7 @@
     Pulse W3906XXXX LTE/GPS adhesive antenna
     Antenova SRFL029 LTE adhesive antenna
     Cellular SIM Card
+    Anidees PI 4 CASE Silver PRO Extra High 
 
   #Generating SSH Keys
     #The reason is that the moment we write the Raspbian OS, we want a quick method of getting into the Pi. We'll be creating a private key.

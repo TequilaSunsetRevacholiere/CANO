@@ -14,6 +14,14 @@ Group Temporal Key (GTK)
   Encrypts broacasts and multi-cast traffic. It is shared between all of the clients associated to an AP.
   #The whole process is based on the assumption that the Authenticator (Access Point) and the Supplicant (Client) know the PMK. It is never transmitted.
 
+#The PTK and GTK are split into components that are the AES encryption keys for various traffic:
+  Key Confirmation Key (KCK) = PTK bits 0 - 127
+  Key Encryption Key (KEK) = PTK bits 128 - 255
+  Temporal Encryption Key (TEK) = PTK bits 256 - 383
+  Temporal Message Integrity Check (MIC) Key (TMK) = PTK bits 384 - 511 for TKIP (WPA1)
+  Group Encryption Key (GEK) = GTK bits 0 - 127 for multi-cast traffic
+  Group Integry Key (GIK) = GTK bits 128 - 255 for TKIP (WPA1)
+
   #Nonce
 ANONCE
   An Access Point-generated random number
@@ -25,12 +33,8 @@ SNONCE
 rockyou.txt is open-source
 Messages 1&2 or Message 2&3 are what you need for a successful capture.
 
-
-
-
-
-
-Two-Terminal Attack -- 1. Targeted Survey and 2. Aireplay-ng / Wireshark screened
+#DeAuthentication Practical Setup
+  #Two-Terminal Attack -- 1. Targeted Survey and 2. Aireplay-ng / Wireshark screened
 
 #Start a targeted airodump-ng survey with the specific channel and bssid of your target at a minimum.
   -w [filename]

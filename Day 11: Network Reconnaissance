@@ -1,0 +1,104 @@
+#Network Reconnaissance
+  #Traceroute and nmap
+
+  #Killchain
+
+> Recon
+  > Weaponization
+    > Delivery
+      > Exploitation
+        > Installation
+          > Command & Control
+            > Actions on Objective
+
+  #Before we attempt to exploit a network, we need to know as much as we can about it:
+
+    Open Ports
+    Services / Versions
+    Internet Service Provider (ISP)
+    How many hops to reach the internet
+    Device IP Adresses
+    Operating Systems (OS)
+    Router Configuration / Browser Accessibility
+    User-Agent Strings (UAS)
+
+  #If you are being used as a remote bridge into a network, you would need a wireguard configuration for a remote operator in order for them to connect to your Point of Presence (PoP) device.
+
+#OPSEC
+
+  #Prior to operations, you must change your hostname, change your MAC, and set it to Managed Mode.
+    #We will be utilizing the WPA_Supplicant process to connect.
+      #So we need to stop any problem processes:
+
+sudo airmon-ng check kill
+        or
+sudo systemctl stop NetworkManager.service
+
+  #When you want to bring it back its this:
+
+sudo systemctl restart NetworkManager
+
+  #Then, create the wpa_supplicant.conf file with your target's credentials.
+
+wpa_passphrase "[ssid/bssid]" [password] | sudo tee /etc/wpa_supplicant/wpa_supplicant_[filename].conf
+
+  #Now, we use the conf file to connect to the network:
+
+sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant_[filename].conf -i [interface] -B -f [filename 2].log
+
+  #Check that you authenticated
+
+iwconfig
+  or
+ip -br -c a
+
+  #you want an IPv4 Address, so run a dhclient to request one from the router
+    #install dhclient and dhcpcd with:
+
+sudo apt install isc-dhcp-client
+
+  now run:
+
+sudo dhclient -v [interface]
+        or
+sudo dhcpcd -v [interface]
+
+  #it will tell you that your interface is "bound to [IP Address] ..." 
+    #rerun ip -br -c a to see the IPv4 address
+
+#WPS Authentication
+  #we're going to prep interfaces and kill any troublesome processes. Then we're going to run another instance of wpa_supplicant
+
+sudo airmon-ng check kill
+sudo wpa_supplicant -i
+
+  #create a wpa_supplicant.conf file and enter these parameters:
+    #This will update with the SSID and PSKs when they are found.
+
+ctrl_interface=/var/run/wpa_supplicant
+ctrl_interface_group=0
+update_config=1
+
+  #create a backup of this file
+
+sudo cp /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.conf.bak
+
+Then, run wpa_supplicant:
+
+sudo wpa_supplicant -i [interface] -c /etc/wpa_supplicant/wpa_supplicant.conf > "Successfully initialized wpa_supplicant"
+sudo wpa_cli
+  #This will enter you into a different Command-Line Interface (CLI)
+
+> wps_reg [BSSID] [WPS PIN]
+  #you will go through an authentication/association process and it could fail. look back at your supplicant.conf and see if you were given a password.
+    #If you did, then rename the file and create a new conf to run for a different AP.
+
+#Traceroute
+  #This is a network diagnostic tool that maps the path, or route, data takes across an IP network from a source to a destination.
+
+sudo apt install traceroute
+traceroute -i [interface] [dns name] > [filename].txt
+            or
+traceroute -i [interface] [IP Address] > [filename].txt
+
+

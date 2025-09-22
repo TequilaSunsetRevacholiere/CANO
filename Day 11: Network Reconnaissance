@@ -51,6 +51,9 @@ sudo wpa_supplicant -c /etc/wpa_supplicant/wpa_supplicant_[filename].conf -i [in
 iwconfig
   or
 ip -br -c a
+  #-br = prints out basic information in a tabular format for better readability.
+  #-c = configures color output.
+  #-a = executes command over all objects.
 
   #you want an IPv4 Address, so run a dhclient to request one from the router
     #install dhclient and dhcpcd with:
@@ -125,3 +128,16 @@ Firefox > Settings / about:preferences > Network Settings > Manual Proxy Configu
   #All of the steps are the same to connect using the PI.
     #Once connected, run dhclient to request an IPv4 address, and then attempt to connect to the router splashpage.
 
+#nmap
+  #is a free and open-source network scanner that identifies hosts, services, and operating systems on a network by sending specifically crafted packets to targets and analyzing the responses
+
+  #These commands will display what hosts are up and talking to each other, as well as the current open ports.
+
+nmap [IP]/[CIDR] -sn -v | tee [absolute file path]
+nmap [IP]/[CIDR] -T4 -vv | tee [absolute file path]
+
+  #OS Detection and Fingerprinting
+    #-O is for the entire IP Address range, and -F is for the 100 most popular ports.
+
+nmap [IP Address]/[CIDR] -O -vv | tee [absolute file path]
+nmap [IP Address]/[CIDR] -F -vv | tee [absolute file path]

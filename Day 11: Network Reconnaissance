@@ -101,4 +101,27 @@ traceroute -i [interface] [dns name] > [filename].txt
             or
 traceroute -i [interface] [IP Address] > [filename].txt
 
+#Router Enumeration
+  #If you have potential admin credentials, use a traceroute to find the gateway router IP address, then open a browser and put that IP address you found in the search bar and enter the possible credentials.
+    #Run a screen recording, so you don't have to hand jam all of the diferrent parameters and information.
+
+  #Get the following information:
+    Firmware / Hardware Versions
+    System Logs
+    DNS Settings
+    WPS Pin (if applicable)
+    2.4 / 5 Ghz sides and Passwords
+
+#Port Binding
+  #SSH port binding, also known as SSH port forwarding or SSH tunneling, involves establishing a secure, encrypted tunnel through an SSH connection to redirect network traffic between specific ports on different machines. 
+    #We want to port forward our Port 80 HTTP traffic between the pi and our laptops to a random higher number port.
+
+ssh -D [port] pi@[wireguad IP]
+
+Then in your browser, likely Firefox:
+
+Firefox > Settings / about:preferences > Network Settings > Manual Proxy Configuration > SOCKS Host: localhost Port: [port]
+                                                                   > Proxy DNS when using SOCKS v5
+  #All of the steps are the same to connect using the PI.
+    #Once connected, run dhclient to request an IPv4 address, and then attempt to connect to the router splashpage.
 

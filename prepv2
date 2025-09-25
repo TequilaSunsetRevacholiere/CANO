@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Exit on any error
+set -e
+
+# Get all interfaces except loopback
+interfaces=($(ls /sys/class/net | grep -v lo))
+
+# Function to list interfaces
+list_interfaces() {
+    echo "Available interfaces:"
+    for i in "${!interfaces[@]}"; do
+        echo "[$i] ${interfaces[$i]}"
+    done
+}
+
+# Function to select an interface and rename it
+select_and_rename_interface() {
+    local new_name="$1"
+    list_interfaces
+    read -p "Select interface number for $new_name: " idx
+    original="${interfaces[$idx]}"
+    sudo ip link set "$original" down
+    sudo ip link set "$original" name "$new_name"
+    echo "Renamed $original to $new_name"
+}
+
+# Function to select MAC randomization method
+randomize_mac() {
+    local iface="$1"
+    echo "Choose MAC spoofing method for $iface:"
+    echo "1) Fully random MAC (-r)"
+    echo "2) Same kind of vendor MAC (-a)"
+    echo "3) Completely random vendor MAC (-A)"
+    echo "4) Restore permanent MAC (-p)"
+    read -p "Choice: " opt
+    case $opt in
+        1) sudo macchanger -r "$iface" ;;
+        2) sudo macchanger -a "$iface" ;;
+        3) sudo macchanger -A "$iface" ;;
+        4) sudo macchanger -p "$iface" ;;
+        *) echo "Invalid choice. Skipping $iface." ;;
+    esac
+}
+
+# Function to configure interface: down, spoof, monitor mode, up
+setup_interface() {
+    local iface="$1"
+    sudo ip link set "$iface" down
+    randomize_mac "$iface"
+    sudo iw dev "$iface" set type monitor
+    sudo ip link set "$iface" up
+    iw dev "$iface" info
+    echo "----- $iface ready -----"
+}
+
+# -------- Main --------
+clear
+select_and_rename_interface "wlan1"
+echo " "
+select_and_rename_interface "wlan2"
+echo " "
+select_and_rename_interface "wlan3"
+echo " "
+
+echo "Mac Changing comin' up"
+
+setup_interface "wlan1"
+echo " "
+setup_interface "wlan2"
+echo " "
+setup_interface "wlan3"
